@@ -1,7 +1,7 @@
 downloaded_hdf5_location: /gpfs/users/maiborodav/itwinai_0325/use-cases/caloinn/calochallenge_data/
 dataset_type: "dataset_1_pions"
 checkpoint_path: checkpoints/
-epochs: 1
+epochs: 5
 strategy: ddp
 batch_size: 512
 inference_model_mlflow_uri: checkpoints/best_model.pth
@@ -9,10 +9,6 @@ inference_model_mlflow_uri: checkpoints/best_model.pth
 training_pipeline:
   _target_: itwinai.pipeline.Pipeline
   steps:
-    dataloading_step:
-          _target_: data.CaloChallengeDownloader
-          data_path: ${downloaded_hdf5_location}
-          dataset_type: ${dataset_type}
 
     readingdataset_step:
       _target_: data.CalochallengeDataSplitter
@@ -68,6 +64,8 @@ training_pipeline:
           - _target_: itwinai.loggers.MLFlowLogger
             experiment_name: CaloINN docs test
             log_freq: batch 
+          - _target_: itwinai.loggers.Prov4MLLogger
+            experiment_name: CaloINN docs test provenance
 
 
 

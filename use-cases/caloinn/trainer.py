@@ -186,6 +186,23 @@ class CaloChallengeTrainer(TorchTrainer):
             step=self.train_glob_step,
             batch_idx=batch_idx,
         )
+
+        self.log(
+            item=None,
+            identifier="system",
+            kind="system",
+            step=self.train_glob_step,
+            batch_idx=batch_idx,
+        )
+
+        self.log(
+            item=None,
+            identifier="carbon",
+            kind="carbon",
+            step=self.train_glob_step,
+            batch_idx=batch_idx,
+        )
+
         metrics: Dict[str, Any] = self.compute_metrics(
             true=None,
             pred=None,
