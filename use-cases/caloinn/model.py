@@ -450,3 +450,34 @@ class CINN(nn.Module):
         if self.pre_subnet:
             c_norm = self.pre_subnet(c_norm)
         return self.model.forward(x.float(), c_norm.float(), rev=rev, jac=jac)
+    
+    def sample(self, num_pts: int, condition: torch.Tensor) -> torch.Tensor:
+        """
+        Sample from the learned conditional distribution.
+
+        Args:
+            num_pts (int): Number of samples to generate for each given condition.
+            condition (torch.Tensor): Conditioning tensor of shape [batch, cond_dim].
+
+        Returns:
+            torch.Tensor: Samples with shape [batch, num_pts, data_dim].
+        """
+        device = next(self.parameters()).device
+        batch_size = condition.shape[0]
+
+        # latent z ~ N(0, I)
+        z = torch.normal(
+            0.0,
+            1.0,
+            size=(num_pts * batch_size, self.num_dim),
+            device=device,
+        )
+
+        # repeat conditions for each latent sample
+        c_rep = condition.repeat(num_pts, 1)
+
+        # inverse through the flow
+        x, _ = self.forward(z, c_rep, rev=True)
+
+        # reshape to [batch, num_pts, data_dim]
+        return x.reshape(num_pts, batch_size, self.num_dim).permute(1, 0, 2)

@@ -9,11 +9,6 @@ inference_model_mlflow_uri: checkpoints/best_model.pth
 training_pipeline:
   _target_: itwinai.pipeline.Pipeline
   steps:
-    dataloading_step:
-          _target_: data.CaloChallengeDownloader
-          data_path: ${downloaded_hdf5_location}
-          dataset_type: ${dataset_type}
-
     readingdataset_step:
       _target_: data.CalochallengeDataSplitter
       data_path: ${downloaded_hdf5_location}
@@ -68,7 +63,7 @@ training_pipeline:
           - _target_: itwinai.loggers.MLFlowLogger
             experiment_name: CaloINN docs test
             log_freq: batch 
-
+      
 
 
           
